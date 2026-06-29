@@ -1,0 +1,13 @@
+# Core data
+numpy==1.26.4
+
+# Embeddings (CPU-only sentence transformer)
+sentence-transformers==3.0.1
+torch==2.3.1+cpu
+torchvision==0.18.1+cpu
+
+# LLM API (OpenRouter — free models available, optional)
+openai>=1.0.0
+
+# Environment variable management
+python-dotenv==1.0.1
