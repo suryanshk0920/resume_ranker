@@ -71,6 +71,20 @@ Five-phase pipeline:
 
 *\*Founding fit is excluded from weighted sum; applied as a tiebreaker in Phase 3.*
 
+## Sandbox (Google Colab)
+
+Run the full pipeline in your browser with no setup:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/suryanshk0920/resume_ranker/blob/main/sandbox/redrob_ranker.ipynb)
+
+**Steps:**
+1. Click the badge above
+2. Mount Google Drive (cell 3)
+3. Paste the Drive path to your `candidates.jsonl` file
+4. Run All — pipeline executes and downloads `output/submission.csv`
+
+No API key needed. Cached reasoning included in the repo.
+
 ## Requirements
 
 - Python 3.10+
