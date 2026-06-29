@@ -2,6 +2,8 @@
 cache/*
 !cache/.gitkeep
 !cache/reasoning.json
+!cache/candidate_embeddings.pkl
+!cache/candidate_embeddings.pkl_jd.pkl
 data/*
 !data/.gitkeep
 output/*
