@@ -1,7 +1,10 @@
 .env
-cache/
-data/
-output/
+cache/*
+!cache/.gitkeep
+data/*
+!data/.gitkeep
+output/*
+!output/.gitkeep
 analysis/
 SLIDE_DECK_QA.md
 HACKATHON_NARRATIVE.md
