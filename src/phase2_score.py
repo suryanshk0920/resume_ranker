@@ -3,9 +3,11 @@ Phase 2 — Deep Scoring.
 Computes all 5 component scores for each candidate from Phase 1 output.
 """
 
+import os
+import pickle
+
 from src.config import WEIGHTS, TOP_N_BROAD, TOP_N_PRECISION, EMBEDDINGS_CACHE_PATH
 from src.models import ComponentScores, CandidateResult
-from src.scoring.semantic import build_jd_embedding, build_candidate_embeddings, compute_semantic_scores
 from src.scoring.technical import compute_technical_score
 from src.scoring.founding_fit import compute_founding_fit_score
 from src.scoring.behavioural import compute_behavioural_score
@@ -49,9 +51,18 @@ def run_phase2(candidates, jd_decomposed, calibration):
     fast_scores.sort(key=lambda x: -x[5])
     top_for_embed = [x[0] for x in fast_scores[:TOP_N_BROAD]]
 
-    # Embed only top candidates
-    jd_emb = build_jd_embedding(jd_decomposed)
-    cand_embs = build_candidate_embeddings(top_for_embed)
+    # Embed only top candidates — check cache first to avoid loading SentenceTransformer
+    jd_cache = EMBEDDINGS_CACHE_PATH + "_jd.pkl"
+    if os.path.exists(jd_cache) and os.path.exists(EMBEDDINGS_CACHE_PATH):
+        with open(jd_cache, "rb") as f:
+            jd_emb = pickle.load(f)
+        with open(EMBEDDINGS_CACHE_PATH, "rb") as f:
+            cand_embs = pickle.load(f)
+        from src.scoring.semantic import compute_semantic_scores
+    else:
+        from src.scoring.semantic import build_jd_embedding, build_candidate_embeddings, compute_semantic_scores
+        jd_emb = build_jd_embedding(jd_decomposed)
+        cand_embs = build_candidate_embeddings(top_for_embed)
     semantic_map = compute_semantic_scores(top_for_embed, jd_emb, cand_embs)
 
     # Full scoring for all candidates (0.0 semantic for non-embedded)
