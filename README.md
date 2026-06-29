@@ -43,7 +43,7 @@ Set one of these in `.env` and run `python run.py --fresh-reasoning`:
 
 | Provider | Key | Models |
 |----------|-----|--------|
-| NVIDIA | `NVIDIA_API_KEY` | `minimaxai/minimax-m3` |
+| NVIDIA | `NVIDIA_API_KEY` | `mistralai/mistral-medium-3.5-128b` |
 | Groq | `GROQ_API_KEY` | `llama-3.1-8b-instant` |
 | OpenRouter | `OPENROUTER_API_KEY` | `google/gemma-4-26b-a4b-it:free` |
 
