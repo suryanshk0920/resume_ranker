@@ -90,7 +90,7 @@ def run_phase2(candidates, jd_decomposed, calibration):
     top = results[:TOP_N_PRECISION]
 
     # Write audit CSV
-    import csv, os
+    import csv
     from src.config import OUTPUT_DIR
     audit_path = os.path.join(OUTPUT_DIR, "phase2_scored.csv")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
