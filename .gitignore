@@ -1,6 +1,7 @@
 .env
 cache/*
 !cache/.gitkeep
+!cache/reasoning.json
 data/*
 !data/.gitkeep
 output/*

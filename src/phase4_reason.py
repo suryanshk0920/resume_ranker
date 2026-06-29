@@ -187,12 +187,13 @@ def generate_reasoning_batch(results, candidates_map, jd_decomposed, use_cache=F
     required = ", ".join(jd_decomposed.get("required_skill_clusters", []))
     founding = ", ".join(jd_decomposed.get("founding_team_signals", []))
 
-    # Try to initialise API client — priority: Groq → Gemini → OpenRouter
+    # Try to initialise API client — priority: Groq → Gemini → OpenRouter → NVIDIA
     client = None
     active_model = REASONING_MODEL
     groq_key = os.environ.get("GROQ_API_KEY", "")
     gemini_key = os.environ.get("GEMINI_API_KEY", "")
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    nvidia_key = os.environ.get("NVIDIA_API_KEY", "")
 
     if groq_key:
         try:
@@ -232,6 +233,19 @@ def generate_reasoning_batch(results, candidates_map, jd_decomposed, use_cache=F
             print(f"  OpenRouter client ready, will try model: {active_model}")
         except Exception as e:
             print(f"  Failed to create OpenRouter client: {type(e).__name__}")
+
+    if client is None and nvidia_key:
+        try:
+            from openai import OpenAI
+            client = OpenAI(
+                base_url="https://integrate.api.nvidia.com/v1",
+                api_key=nvidia_key,
+                timeout=30.0,
+                max_retries=0,
+            )
+            print(f"  NVIDIA client ready, will try model: {active_model}")
+        except Exception as e:
+            print(f"  Failed to create NVIDIA client: {type(e).__name__}")
 
     updated = False
     num_batches = (len(uncached) + REASONING_BATCH_SIZE - 1) // REASONING_BATCH_SIZE

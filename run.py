@@ -5,9 +5,10 @@ Single entry point. Run: python run.py
 
 import argparse
 import csv
+import json
 import os
 import time
-from src.config import DATA_PATH, CALIBRATION_CACHE_PATH, JD_CACHE_PATH, OUTPUT_DIR
+from src.config import DATA_PATH, CALIBRATION_CACHE_PATH, JD_CACHE_PATH, OUTPUT_DIR, CACHE_DIR
 from src.phase0_calibrate import run_calibration, decompose_jd, JD_TEXT
 from src.phase1_filter import run_phase1
 from src.phase2_score import run_phase2
@@ -22,8 +23,8 @@ def main():
     parser.add_argument("--force-jd", action="store_true")
     parser.add_argument("--skip-reasoning", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--use-reasoning-cache", action="store_true",
-                        help="Use cached reasoning if available (default: always call API)")
+    parser.add_argument("--fresh-reasoning", action="store_true",
+                        help="Regenerate all reasoning (ignore cache)")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -50,9 +51,29 @@ def main():
 
     if not args.skip_reasoning:
         t4 = time.time()
-        print("[Phase 4] Generating reasoning...")
+        any_key = any(os.environ.get(k, "") for k in
+                      ["GROQ_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "NVIDIA_API_KEY"])
         candidates_map = {c.candidate_id: c for c in filtered}
-        final = generate_reasoning_batch(final, candidates_map, jd, use_cache=args.use_reasoning_cache)
+
+        if not any_key:
+            # No API key: load cached reasoning directly, never call API or template
+            cache_path = os.path.join(CACHE_DIR, "reasoning.json")
+            if os.path.exists(cache_path):
+                with open(cache_path) as f:
+                    cached = json.load(f)
+                for r in final:
+                    r.reasoning = cached.get(r.candidate_id, "")
+                loaded = sum(1 for r in final if r.reasoning)
+                print(f"[Phase 4] Loaded {loaded}/100 reasoning entries from cache (no API key)")
+            else:
+                print("[Phase 4] No API key and no cache — generating template reasoning")
+                final = generate_reasoning_batch(final, candidates_map, jd, use_cache=False)
+        else:
+            use_cache = not args.fresh_reasoning
+            label = "Generating fresh reasoning" if args.fresh_reasoning else "Using cache + generating new"
+            print(f"[Phase 4] {label}...")
+            final = generate_reasoning_batch(final, candidates_map, jd, use_cache=use_cache)
+
         print(f"  Done in {time.time()-t4:.1f}s")
 
     total = time.time() - t0
