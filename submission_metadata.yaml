@@ -1,14 +1,14 @@
 # Redrob Hackathon — Submission Metadata
-team_name: "your-team-name-here"
+team_name: "OneManRank"
 
 primary_contact:
-  name: "Full Name"
-  email: "primary@example.com"
-  phone: "+91-XXXXXXXXXX"
+  name: "Suryansh Kumar"
+  email: "suryanshkumar0903@gmail.com"
+  phone: "+91-7043461020"
 
 team_members:
-  - name: "Your Name"
-    email: "you@example.com"
+  - name: "Suryansh Kumar"
+    email: "suryanshkumar0903@gmail.com"
     role: "Team Lead"
 
 github_repo: "https://github.com/suryanshk0920/resume_ranker"
@@ -29,7 +29,7 @@ compute:
   pre_computation_time_minutes: 2
 
 ai_tools_used:
-  - "Claude"
+  - "OpenCode"
 
 ai_usage_summary: |
   Used Claude (opencode agent) for end-to-end development, architecture design,
